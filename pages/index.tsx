@@ -3,7 +3,14 @@ import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
-const Home: NextPage = () => {
+import { getData } from '../lib/org'
+import { join } from 'path'
+import { GetStaticProps } from 'next'
+
+type Props = {
+  content: string
+}
+const Home: NextPage = ({ content }: Props) => {
   return (
     <div className={styles.container}>
       <Head>
@@ -21,6 +28,7 @@ const Home: NextPage = () => {
           Get started by editing{' '}
           <code className={styles.code}>pages/index.tsx</code>
         </p>
+        <div dangerouslySetInnerHTML={{ __html: content }} />
 
         <div className={styles.grid}>
           <a href="https://nextjs.org/docs" className={styles.card}>
@@ -72,3 +80,12 @@ const Home: NextPage = () => {
 }
 
 export default Home
+
+export const getStaticProps: GetStaticProps<Props> = async () => {
+  const directory = join(process.cwd(), 'pages')
+  const content = await getData(join(directory, `sample.org`))
+
+  return {
+    props: { content: content }
+  }
+}
